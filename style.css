@@ -25,25 +25,47 @@ h1 {
     font-size: 14px;
 }
 
-.family-card {
-    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+/* لوحة النقاط والمتصدرين */
+.leaderboard-card {
+    background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
     color: white;
     padding: 15px 20px;
     border-radius: 12px;
     max-width: 600px;
     margin-bottom: 20px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
-.family-card h3 {
-    margin: 0 0 5px 0;
+.leaderboard-card h3 {
+    margin: 0 0 12px 0;
     font-size: 18px;
+    text-align: center;
 }
 
-.family-card p {
-    margin: 0;
-    font-size: 14px;
-    line-height: 1.6;
+.leaderboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 8px;
+}
+
+.user-score-box {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 8px 10px;
+    border-radius: 8px;
+    text-align: center;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.user-score-name {
+    font-size: 12px;
+    display: block;
+}
+
+.user-score-points {
+    font-size: 16px;
+    font-weight: bold;
+    color: #f1c40f;
 }
 
 .progress-container {
@@ -76,7 +98,6 @@ h1 {
     transition: width 0.4s ease;
 }
 
-/* إصلاح التنسيق وعرض الخانات بجانب بعضها بشكل مرتب */
 .input-group {
     margin-bottom: 20px;
     display: flex;
@@ -116,9 +137,7 @@ button {
     font-weight: bold;
 }
 
-button:hover {
-    background-color: #219150;
-}
+button:hover { background-color: #219150; }
 
 ul {
     background: #ffffff;
@@ -136,6 +155,7 @@ li {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    cursor: pointer;
 }
 
 li.completed {
@@ -172,10 +192,7 @@ li.completed {
     font-size: 12px;
 }
 
-.mode-btn {
-    float: left;
-    background-color: #34495e;
-}
+.mode-btn { float: left; background-color: #34495e; }
 
 footer {
     margin-top: 40px;
@@ -186,7 +203,6 @@ footer {
     color: #777;
 }
 
-/* الوضع الليلي */
 body.dark-theme { background-color: #1a1a1a; color: #f4f6f9; }
 body.dark-theme ul, body.dark-theme .progress-container { background: #2d2d2d; color: #fff; }
 body.dark-theme input[type="text"], body.dark-theme #categorySelect, body.dark-theme #userSelect { background-color: #333; color: #fff; border-color: #555; }

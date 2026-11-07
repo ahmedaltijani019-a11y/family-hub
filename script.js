@@ -1,4 +1,18 @@
-document.addEventListener("DOMContentLoaded", loadTasks);
+document.addEventListener("DOMContentLoaded", () => {
+    loadTasks();
+    updateLeaderboardUI();
+});
+
+// قائمة أفراد العائلة والنقاط المبدئية
+let familyScores = JSON.parse(localStorage.getItem("familyScores")) || {
+    "الوالد التجاني": 0,
+    "الوالدة تهاني": 0,
+    "أحمد": 0,
+    "السر": 0,
+    "أسامة": 0,
+    "محمد": 0,
+    "العائلة": 0
+};
 
 function addTask() {
     let input = document.getElementById("taskInput");
@@ -20,7 +34,7 @@ function addTask() {
     input.value = "";
     
     confetti({
-        particleCount: 60,
+        particleCount: 50,
         spread: 50,
         origin: { y: 0.7 }
     });
@@ -32,7 +46,7 @@ function createTaskElement(taskText, category, user, isCompleted) {
     let li = document.createElement("li");
     
     let contentSpan = document.createElement("span");
-    contentSpan.innerHTML = `<span class="category-tag">${category}</span> <span class="user-tag">${user}</span> ${taskText}`;
+    contentSpan.innerHTML = `<span class="category-tag">${category}</span> <span class="user-tag">👤 ${user}</span> ${taskText}`;
     li.appendChild(contentSpan);
 
     if (isCompleted) {
@@ -40,21 +54,29 @@ function createTaskElement(taskText, category, user, isCompleted) {
     }
 
     li.onclick = function() {
+        let wasCompleted = li.classList.contains("completed");
         li.classList.toggle("completed");
-        updateTaskStateInLocalStorage(taskText, li.classList.contains("completed"));
-        updateProgress();
+        let isNowCompleted = li.classList.contains("completed");
 
-        if (li.classList.contains("completed")) {
+        updateTaskStateInLocalStorage(taskText, isNowCompleted);
+        
+        // تعديل النقاط عند الضغط على المهمة
+        if (!wasCompleted && isNowCompleted) {
+            addPoints(user, 10); // زيادة 10 نقاط
             confetti({
-                particleCount: 40,
-                spread: 40,
+                particleCount: 60,
+                spread: 60,
                 origin: { y: 0.8 }
             });
+        } else if (wasCompleted && !isNowCompleted) {
+            addPoints(user, -10); // خصم 10 نقاط إذا ألغى التحديد
         }
+
+        updateProgress();
     };
 
     let deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "تم / حذف";
+    deleteBtn.textContent = "حذف";
     deleteBtn.className = "delete-btn";
     
     deleteBtn.onclick = function(e) {
@@ -69,13 +91,39 @@ function createTaskElement(taskText, category, user, isCompleted) {
     updateProgress();
 }
 
+function addPoints(user, points) {
+    if (familyScores.hasOwnProperty(user)) {
+        familyScores[user] = Math.max(0, (familyScores[user] || 0) + points);
+    } else {
+        familyScores[user] = Math.max(0, points);
+    }
+    localStorage.setItem("familyScores", JSON.stringify(familyScores));
+    updateLeaderboardUI();
+}
+
+function updateLeaderboardUI() {
+    let leaderboard = document.getElementById("leaderboard");
+    if (!leaderboard) return;
+
+    leaderboard.innerHTML = "";
+
+    for (let user in familyScores) {
+        let box = document.createElement("div");
+        box.className = "user-score-box";
+        box.innerHTML = `
+            <span class="user-score-name">${user}</span>
+            <span class="user-score-points">⭐ ${familyScores[user]}</span>
+        `;
+        leaderboard.appendChild(box);
+    }
+}
+
 function updateProgress() {
     let allTasks = document.querySelectorAll("#taskList li");
     let completedTasks = document.querySelectorAll("#taskList li.completed");
     
     let total = allTasks.length;
     let completed = completedTasks.length;
-
     let percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
 
     let progressBar = document.getElementById("progressBar");
